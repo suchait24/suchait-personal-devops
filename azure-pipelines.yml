@@ -14,7 +14,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: 'helm dependency update'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/_suchait24_suchait-personal-devops/helm/keycloak'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/suchait-personal-devops/helm/keycloak'
   displayName: 'Helm Dependency Update'
 
 
