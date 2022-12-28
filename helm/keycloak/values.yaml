@@ -505,30 +505,16 @@ service:
 ## ref: https://kubernetes.io/docs/user-guide/ingress/
 ##
 ingress:
-  ## @param ingress.enabled Enable ingress record generation for Keycloak
-  ##
-  enabled: false
-  ## @param ingress.ingressClassName IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)
-  ## This is supported in Kubernetes 1.18+ and required if you have more than one IngressClass marked as the default for your cluster .
-  ## ref: https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/
-  ##
-  ingressClassName: ""
-  ## @param ingress.pathType Ingress path type
-  ##
-  pathType: ImplementationSpecific
-  ## @param ingress.apiVersion Force Ingress API version (automatically detected if not set)
-  ##
-  apiVersion: ""
-  ## @param ingress.hostname Default host for the ingress record (evaluated as template)
-  ##
-  hostname: keycloak.local
-  ## @param ingress.path Default path for the ingress record
-  ##
-  path: /
-  ## @param ingress.servicePort Backend service port to use
-  ## Default is http. Alternative is https.
-  ##
-  servicePort: http
+  enabled: true
+  className: nginx
+  annotations:
+    kubernetes.io/tls-acme: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+    - host: shs-dev-ingress.southindia.cloudapp.azure.com
+      paths:
+        - path: /keycloak-service(/|$)(.*)
+          pathType: Prefix
   ## @param ingress.annotations [object] Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.
   ## Use this parameter to set the required annotations for cert-manager, see
   ## ref: https://cert-manager.io/docs/usage/ingress/#supported-annotations
@@ -537,7 +523,6 @@ ingress:
   ##   kubernetes.io/ingress.class: nginx
   ##   cert-manager.io/cluster-issuer: cluster-issuer-name
   ##
-  annotations: {}
   ## @param ingress.tls Enable TLS configuration for the host defined at `ingress.hostname` parameter
   ## TLS certificates will be retrieved from a TLS secret with name: `{{- printf "%s-tls" (tpl .Values.ingress.hostname .) }}`
   ## You can:
@@ -641,7 +626,7 @@ serviceAccount:
   ## @param serviceAccount.name Name of the created ServiceAccount
   ## If not set and create is true, a name is generated using the fullname template
   ##
-  name: ""
+  name: shs007-service-account
   ## @param serviceAccount.automountServiceAccountToken Auto-mount the service account token in the pod
   ##
   automountServiceAccountToken: true
